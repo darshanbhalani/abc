@@ -1,0 +1,114 @@
+<div class="col-12 kendo-grid-data p-2 d-flex justify-content-center flex-column">
+  <span class="p-2"><i class="fa fa-home pe-2"></i><i class="fa fa-chevron-right pe-2"></i>Configurations</span>
+  <div class="kendo-grid-data">
+    <kendo-grid [kendoGridBinding]="configurationsList" [height]="600" kendoGridSelectBy="id" [pageSize]="20"
+      [pageable]="true" [sortable]="true" [groupable]="false" [reorderable]="true" [resizable]="true" [height]="500"
+      [columnMenu]="{ filter: true }">
+      <kendo-grid-column field="configurationName" title="Configuration Name">
+      </kendo-grid-column>
+      <kendo-grid-column title="Action" [width]="200" [columnMenu]="false">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <i class="fa fa-pencil"
+            (click)="openModal($event, modalContent, { configurationId: dataItem.configurationId, configurationName: dataItem.configurationName})"></i>
+          <!-- <i class="fa fa-pencil"
+            (click)="openModal($event, modalContent, { configurationId: dataItem.configurationId, configurationName: dataItem.configurationName, configurationThreshold: 0, configurationInterval: 0 })"></i> -->
+        </ng-template>
+      </kendo-grid-column>
+    </kendo-grid>
+  </div>
+</div>
+
+<ng-template #modalContent let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ modalTitle }}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form *ngIf="isAQIModal; else configForm">
+      <!-- AQI Form -->
+      <form [formGroup]="aqiForm">
+        <div class="mb-3">
+          <label for="parameter" class="form-label">Parameter</label>
+          <select id="parameter" formControlName="parameter" class="form-control">
+            <option *ngFor="let param of parameters" [value]="param">{{ param }}</option>
+          </select>
+          <div *ngIf="aqiForm.get('parameter')?.invalid && aqiForm.get('parameter')?.touched" class="error-message">
+            Parameter is required.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="duration" class="form-label">Duration (hours)</label>
+          <select id="duration" formControlName="duration" class="form-control">
+            <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
+          </select>
+          <div *ngIf="aqiForm.get('duration')?.invalid && aqiForm.get('duration')?.touched" class="error-message">
+            Duration is required.
+          </div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Lower Bound</th>
+              <th>Upper Bound</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let category of categories">
+              <td>{{ category }}</td>
+              <td>
+                <input type="number" step="any" min="0"
+                  formControlName="{{ category.toLowerCase().replace(' ', '') }}Lower" class="form-control"
+                  [readonly]="category === 'Good'"
+                  [ngClass]="{'is-invalid': aqiForm.get(category.toLowerCase().replace(' ', '') + 'Lower')?.invalid && aqiForm.get(category.toLowerCase().replace(' ', '') + 'Lower')?.touched}">
+                <div
+                  *ngIf="aqiForm.get(category.toLowerCase().replace(' ', '') + 'Lower')?.hasError('required') && aqiForm.get(category.toLowerCase().replace(' ', '') + 'Lower')?.touched"
+                  class="invalid-feedback">
+                  Lower bound is required.
+                </div>
+                <div
+                  *ngIf="aqiForm.get(category.toLowerCase().replace(' ', '') + 'Lower')?.hasError('min') && aqiForm.get(category.toLowerCase().replace(' ', '') + 'Lower')?.touched"
+                  class="invalid-feedback">
+                  Lower bound must be a positive number.
+                </div>
+              </td>
+              <td>
+                <input type="number" step="any" min="0"
+                  formControlName="{{ category.toLowerCase().replace(' ', '') }}Upper" class="form-control"
+                  [readonly]="category === 'Severe'"
+                  [ngClass]="{'is-invalid': aqiForm.get(category.toLowerCase().replace(' ', '') + 'Upper')?.invalid && aqiForm.get(category.toLowerCase().replace(' ', '') + 'Upper')?.touched}">
+                <div
+                  *ngIf="aqiForm.get(category.toLowerCase().replace(' ', '') + 'Upper')?.hasError('required') && aqiForm.get(category.toLowerCase().replace(' ', '') + 'Upper')?.touched"
+                  class="invalid-feedback">
+                  Upper bound is required.
+                </div>
+                <div
+                  *ngIf="aqiForm.get(category.toLowerCase().replace(' ', '') + 'Upper')?.hasError('min') && aqiForm.get(category.toLowerCase().replace(' ', '') + 'Upper')?.touched"
+                  class="invalid-feedback">
+                  Upper bound must be a positive number.
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+    </form>
+    <ng-template #configForm>
+      <!-- Configuration Form -->
+      <form>
+        <div class="mb-3">
+          <label for="thresholdValue" class="form-label">Threshold Value</label>
+          <input [(ngModel)]="thresholdValue" type="number" class="form-control" id="thresholdValue"
+            name="thresholdValue">
+        </div>
+        <div class="mb-3">
+          <label for="intervalTime" class="form-label">Interval Time</label>
+          <input [(ngModel)]="intervalTime" type="number" class="form-control" id="intervalTime" name="intervalTime">
+        </div>
+      </form>
+    </ng-template>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click'); saveChanges()">Save</button>
+  </div>
+</ng-template>

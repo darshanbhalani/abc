@@ -1,0 +1,49 @@
+<div class="container-fluid d-flex justify-content-around mt-3 row" style="height: 35vh;">
+    <div class="container-fluid pb-2 d-flex justify-content-between">
+        <div>
+            <span>
+                <i class="fa fa-home pe-2"></i>
+                <i class="fa fa-chevron-right pe-2"></i>
+                Dashboard
+            </span>
+        </div>
+        <div>
+            <ng-container *ngIf="checked; else refreshIcon">
+                <kendo-dropdownlist [data]="syncIntervals" [(ngModel)]="intervalValue"
+                    (valueChange)="onIntervalChange($event)">
+                </kendo-dropdownlist>
+            </ng-container>
+            <ng-template #refreshIcon>
+                <i class="ms-auto fa fa-solid fa-arrows-rotate" (click)="syncData()"></i>
+            </ng-template>
+            <kendo-switch [(ngModel)]="checked" (ngModelChange)="onSwitchChange($event)"></kendo-switch>
+        </div>
+    </div>
+    <div class="col col-lg-3 col-md-3 col-sm-12">
+        <app-circular-counter [title]="'OverSpeed'" [count]="incidentOverSpeed.length" (click)="showOverspeedGrid()">
+        </app-circular-counter>
+    </div>
+    <div class="col col-lg-3 col-md-3 col-sm-12">
+        <app-circular-counter [title]="'Temperature'" [count]="incidentTemperature.length"
+            (click)="showTemperatureGrid()"></app-circular-counter>
+    </div>
+    <div class="col col-lg-3 col-md-3 col-sm-12">
+        <app-circular-counter [title]="'AQI'" [count]="incidentAQI.length" (click)="showAQIGrid()">
+        </app-circular-counter>
+    </div>
+    <div class="col col-lg-3 col-md-3 col-sm-12">
+        <app-circular-counter [title]="'Traffic Light'" [count]="'8'"></app-circular-counter>
+    </div>
+    <div class="col-12 kendo-grid-data mt-5 d-flex justify-content-center flex-column" *ngIf="isGridVisible">
+        <div class="kendo-grid-data">
+            <h4>Incident details - {{ title }}</h4>
+            <kendo-grid [kendoGridBinding]="gridData" kendoGridSelectBy="id" [pageSize]="20" [pageable]="true"
+                [sortable]="true" [groupable]="true" [reorderable]="true" [resizable]="true"
+                [columnMenu]="{ filter: true }" [sort]="sort">
+                <ng-container *ngFor="let item of gridColumns; ">
+                    <kendo-grid-column [field]="item.field" [title]="item.title"></kendo-grid-column>
+                </ng-container>
+            </kendo-grid>
+        </div>
+    </div>
+</div>

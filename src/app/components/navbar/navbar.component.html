@@ -1,0 +1,92 @@
+<div class="navbar-compo">
+
+  <!-- Sidebar -->
+  <div [ngClass]="{'open': isClassAdded}" class="sidebar">
+    <div class="logo_details">
+      <div class="logo_name">A M N E X</div>
+      <div (click)="toggleClass()"><i class="fa fa-bars" id="btn"></i></div>
+    </div>
+    <ul class="nav-list">
+      <li>
+        <a [routerLink]="['/dashboard']" routerLinkActive="active">
+          <i class="fa fa-dashboard"></i>
+          <span class="link_name">Dashboard</span>
+        </a>
+        <span class="tooltip">Dashboard</span>
+      </li>
+      <li (click)="toggleDropdown()">
+        <a class="dropdowndropbtn">
+          <i class="fa fa-indent"></i>
+          <span class="link_name">Incidents</span>
+          <!-- Use Angular's *ngIf directive for conditional rendering -->
+          <i *ngIf="isDropdownOpen" class="fa fa-caret-up"></i>
+          <i *ngIf="!isDropdownOpen" class="fa fa-caret-down"></i>
+        </a>
+        <!-- Dropdown for Incidents -->
+        <ul *ngIf="isDropdownOpen">
+          <li>
+            <a [routerLink]="['/incident/overspeed']">
+              <i class="fa fa-truck-fast"></i>
+              <span class="link_name">OverSpeed</span>
+            </a>
+            <span class="tooltip">OverSpeed</span>
+          </li>
+          <li>
+            <a [routerLink]="['/incident/aqi']">
+              <i class="fa fa-cloud"></i>
+              <span class="link_name">AQI</span>
+            </a>
+            <span class="tooltip">AQI</span>
+          </li>
+          <li>
+            <a [routerLink]="['/incident/temperature']">
+              <i class="fa fa-traffic-light"></i>
+              <span class="link_name">Temperature</span>
+            </a>
+            <span class="tooltip">Temperature</span>
+          </li>
+        </ul>
+        <span class="tooltip">Incidents</span>
+      </li>
+      <li>
+        <a [routerLink]="['/configurations']" routerLinkActive="active">
+          <i class="fa fa-gears"></i>
+          <span class="link_name">Configurations</span>
+        </a>
+        <span class="tooltip">Configurations</span>
+      </li>
+    </ul>
+  </div>
+
+  <section class="home-section">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-3 mb-lg-0">
+            <li class="text-light p-2">
+              <span class="text-light me-2">DARSHAN BHALANI</span>
+              <i class="fa fa-caret-down" id="btn"></i>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Router outlet for displaying views based on route -->
+    <router-outlet></router-outlet>
+  </section>
+
+  <!-- Incident Modal -->
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{ modalTitle }}</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <!-- Modal content goes here -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+    </div>
+  </ng-template>
+
+</div>
